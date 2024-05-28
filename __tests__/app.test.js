@@ -108,7 +108,7 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
-  test.only('respond with 200 and return all articles', () => {
+  test('respond with 200 and return all articles', () => {
     return request(app)
       .get('/api/articles/1/comments')
       .expect(200)
@@ -125,6 +125,23 @@ describe('GET /api/articles/:article_id/comments', () => {
             article_id: expect.any(Number),
           });
         });
+      });
+  });
+  test('respond with 404 Not Found if id does not exist', () => {
+    return request(app)
+      .get('/api/articles/999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+
+  test('respond with 400 Bad request if id is not a number', () => {
+    return request(app)
+      .get('/api/articles/banana/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
       });
   });
 });
