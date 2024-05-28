@@ -1,9 +1,5 @@
 const express = require('express');
-const {
-  getTopics,
-  sendBadRequest,
-  getApi,
-} = require('./controllers/controllers');
+const { getTopics, getApi, getArticle } = require('./controllers/controllers');
 const {
   handle400,
   handle404,
@@ -11,11 +7,13 @@ const {
 } = require('./error-handlers/error-handlers');
 
 const app = express();
-app.use(express.json());
 
 app.get('/api/topics', getTopics);
 app.get('/api', getApi);
-app.get('*', sendBadRequest);
+app.get('/api/articles/:article_id', getArticle);
+app.get('*', (req, res, next) => {
+  return Promise.reject({ status: 400, msg: 'Bad Request' }).catch(next);
+});
 
 app.use(handle400);
 app.use(handle404);
