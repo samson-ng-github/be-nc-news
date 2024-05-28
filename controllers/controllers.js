@@ -3,6 +3,7 @@ const {
   selectEndpoints,
   selectArticle,
   selectArticles,
+  selectCommentsByArticle,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -36,4 +37,19 @@ const getArticles = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getTopics, getApi, getArticle, getArticles };
+const getCommentsByArticle = (req, res, next) => {
+  const { params } = req;
+  return selectCommentsByArticle(params.article_id)
+    .then((rows) => {
+      res.status(200).send({ articles: rows });
+    })
+    .catch(next);
+};
+
+module.exports = {
+  getTopics,
+  getApi,
+  getArticle,
+  getArticles,
+  getCommentsByArticle,
+};

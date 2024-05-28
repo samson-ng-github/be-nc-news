@@ -32,9 +32,23 @@ const selectArticles = () => {
     });
 };
 
+const selectCommentsByArticle = (id) => {
+  return db
+    .query(
+      'SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC;',
+      [id]
+    )
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Not found' });
+      return rows;
+    });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
   selectArticle,
   selectArticles,
+  selectCommentsByArticle,
 };

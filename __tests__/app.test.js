@@ -107,6 +107,45 @@ describe('GET /api/articles', () => {
   });
 });
 
+describe('GET /api/articles/:article_id/comments', () => {
+  test('respond with 200 and return all articles', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted('created_at', { descending: true });
+        body.articles.forEach((article) => {
+          expect(article).toEqual({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  test('respond with 404 Not Found if id does not exist', () => {
+    return request(app)
+      .get('/api/articles/999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Not found');
+      });
+  });
+
+  test('respond with 400 Bad request if id is not a number', () => {
+    return request(app)
+      .get('/api/articles/banana/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
+
 describe('GET unknown endpoint', () => {
   test('respond with 400 if endpoint is unknown', () => {
     return request(app)
