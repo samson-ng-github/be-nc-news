@@ -62,22 +62,13 @@ describe('GET /api/articles/:article_id', () => {
         });
       });
   });
-  
-  test.only('respond with 200 and return article of that id', () => {
+
+  test.only('respond with 404 Not Found if id does not exist', () => {
     return request(app)
-      .get('/api/articles/1')
-      .expect(200)
+      .get('/api/articles/999')
+      .expect(404)
       .then(({ body }) => {
-        expect(body.article).toMatchObject({
-          author: 'butter_bridge',
-          title: 'Living in the shadow of a great man',
-          article_id: 1,
-          body: expect.any(String),
-          created_at: expect.any(String),
-          votes: 100,
-          article_img_url:
-            'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-        });
+        expect(body.msg).toBe('Not found');
       });
   });
 });
