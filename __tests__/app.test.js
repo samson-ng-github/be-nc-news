@@ -55,8 +55,8 @@ describe('GET /api/articles/:article_id', () => {
           title: 'Living in the shadow of a great man',
           topic: 'mitch',
           article_id: 1,
-          body: expect.any(String),
-          created_at: expect.any(String),
+          body: 'I find this existence challenging',
+          created_at: '2020-07-09T20:11:00.000Z',
           votes: 100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
@@ -159,12 +159,12 @@ describe('POST /api/articles/:article_id/comments', () => {
       .expect(201)
       .then(({ body }) => {
         expect(body.article).toEqual({
-          comment_id: expect.any(Number),
+          comment_id: 19,
           body: 'Both laptops are crap!',
           article_id: 2,
           author: 'lurker',
           votes: 0,
-          created_at: expect.any(String),
+          created_at: '2024-05-28T16:13:00.000Z',
         });
       });
   });
