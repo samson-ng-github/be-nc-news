@@ -2,6 +2,7 @@ const {
   selectTopics,
   selectEndpoints,
   selectArticle,
+  selectArticles,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -27,4 +28,12 @@ const getArticle = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getTopics, getApi, getArticle };
+const getArticles = (req, res, next) => {
+  return selectArticles()
+    .then((rows) => {
+      res.status(200).send({ articles: rows });
+    })
+    .catch(next);
+};
+
+module.exports = { getTopics, getApi, getArticle, getArticles };

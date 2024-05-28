@@ -22,4 +22,19 @@ const selectArticle = (id) => {
     });
 };
 
-module.exports = { selectTopics, selectEndpoints, selectArticle };
+const selectArticles = () => {
+  return db
+    .query(
+      'SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id;'
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+module.exports = {
+  selectTopics,
+  selectEndpoints,
+  selectArticle,
+  selectArticles,
+};

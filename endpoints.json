@@ -37,5 +37,23 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article by id",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "author": "butter_bridge",
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "article_id": 1,
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 100,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
   }
 }
