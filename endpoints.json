@@ -56,5 +56,21 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments for one article",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "comment_id": 5,
+          "votes": 0,
+          "created_at": "2020-11-03 21:00:00",
+          "author": "icellusedkars",
+          "body": "I hate streaming noses",
+          "article_id": 1
+        }
+      ]
+    }
   }
 }

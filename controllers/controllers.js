@@ -4,6 +4,7 @@ const {
   selectArticle,
   selectArticles,
   selectCommentsByArticle,
+  insertCommentToArticle,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -46,10 +47,20 @@ const getCommentsByArticle = (req, res, next) => {
     .catch(next);
 };
 
+const postCommentToArticle = (req, res, next) => {
+  const { body, params } = req;
+  return insertCommentToArticle(body, params.article_id)
+    .then((rows) => {
+      res.status(201).send({ article: rows });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getApi,
   getArticle,
   getArticles,
   getCommentsByArticle,
+  postCommentToArticle,
 };

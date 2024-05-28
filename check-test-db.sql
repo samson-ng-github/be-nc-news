@@ -7,5 +7,3 @@ SELECT * FROM comments;
 SELECT * FROM topics;
 
 SELECT * FROM users;
-
-SELECT comment_id, votes, comment_id, author, body, article_id FROM comments WHERE article_id = 1 ORDER BY created_at DESC;

@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-const fs = require('fs/promises');
+const format = require('pg-format');
 const endpoints = require('../endpoints.json');
 
 const selectTopics = () => {
@@ -17,7 +17,7 @@ const selectArticle = (id) => {
     .query('SELECT * FROM articles WHERE article_id = $1', [id])
     .then(({ rows }) => {
       if (!rows.length)
-        return Promise.reject({ status: 404, msg: 'Not found' });
+        return Promise.reject({ status: 404, msg: 'Unknown ID' });
       return rows[0];
     });
 };
@@ -40,9 +40,21 @@ const selectCommentsByArticle = (id) => {
     )
     .then(({ rows }) => {
       if (!rows.length)
-        return Promise.reject({ status: 404, msg: 'Not found' });
+        return Promise.reject({ status: 404, msg: 'Unknown ID' });
       return rows;
     });
+};
+
+const insertCommentToArticle = (comment, id) => {
+  const { body, author, votes, created_at } = comment;
+  const formattedStr = format(
+    `INSERT INTO comments (body, article_id, author, votes, created_at) VALUES %L RETURNING * ;`,
+    [[body, id, author, votes, created_at]]
+  );
+  return db.query(formattedStr).then(({ rows }) => {
+    if (!rows.length) return Promise.reject({ status: 404, msg: 'Unknown ID' });
+    return rows[0];
+  });
 };
 
 module.exports = {
@@ -51,4 +63,5 @@ module.exports = {
   selectArticle,
   selectArticles,
   selectCommentsByArticle,
+  insertCommentToArticle,
 };

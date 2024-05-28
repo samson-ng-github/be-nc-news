@@ -69,7 +69,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/999')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Not found');
+        expect(body.msg).toBe('Unknown ID');
       });
   });
 
@@ -132,10 +132,50 @@ describe('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Not found');
+        expect(body.msg).toBe('Unknown ID');
       });
   });
 
+  test('respond with 400 Bad request if id is not a number', () => {
+    return request(app)
+      .get('/api/articles/banana/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+  test('respond with 201 and add that comment to that article', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        body: 'Both laptops are crap!',
+        author: 'lurker',
+        votes: 0,
+        created_at: '2024-05-28 17:13:00',
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          comment_id: expect.any(Number),
+          body: 'Both laptops are crap!',
+          article_id: 2,
+          author: 'lurker',
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test('respond with 404 Not Found if id does not exist', () => {
+    return request(app)
+      .get('/api/articles/999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Unknown ID');
+      });
+  });
   test('respond with 400 Bad request if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana/comments')
