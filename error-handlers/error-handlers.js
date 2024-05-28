@@ -1,5 +1,4 @@
 const handle400 = (err, req, res, next) => {
-  console.log(err);
   if (err.code) res.status(400).send({ msg: 'Bad request' });
   next(err);
 };
@@ -10,6 +9,7 @@ const handle404 = (err, req, res, next) => {
 };
 
 const handle500 = (err, req, res, next) => {
+  console.log(err);
   if (err.msg) res.status(500).send({ msg: 'Unknown error' });
 };
 

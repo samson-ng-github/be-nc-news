@@ -15,8 +15,5 @@ const getApi = (req, res, next) => {
   });
 };
 
-const sendBadRequest = (req, res, next) => {
-  return Promise.reject({ status: 400, msg: 'Bad Request' }).catch(next);
-};
 
-module.exports = { getTopics, sendBadRequest, getApi };
+module.exports = { getTopics, getApi };

@@ -25,15 +25,6 @@ describe('GET /api/topics', () => {
         });
       });
   });
-
-  test('respond with 400 if endpoint is known', () => {
-    return request(app)
-      .get('/banana')
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
-      });
-  });
 });
 
 describe('GET /api', () => {
@@ -50,6 +41,17 @@ describe('GET /api', () => {
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
             });
+      });
+  });
+});
+
+describe('GET unknown endpoint', () => {
+  test('respond with 400 if endpoint is known', () => {
+    return request(app)
+      .get('/banana')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
       });
   });
 });
