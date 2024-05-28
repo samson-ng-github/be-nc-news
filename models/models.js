@@ -1,5 +1,6 @@
 const db = require('../db/connection');
 const fs = require('fs/promises');
+const endpoints = require('../endpoints.json');
 
 const selectTopics = () => {
   return db.query('SELECT * FROM topics').then(({ rows }) => {
@@ -8,9 +9,7 @@ const selectTopics = () => {
 };
 
 const selectEndpoints = () => {
-  return fs
-    .readFile(`${__dirname}/../endpoints.json`, 'utf8')
-    .then((data) => JSON.parse(data));
+  return Promise.resolve(endpoints);
 };
 
 const selectArticle = (id) => {
@@ -23,4 +22,19 @@ const selectArticle = (id) => {
     });
 };
 
-module.exports = { selectTopics, selectEndpoints, selectArticle };
+const selectArticles = () => {
+  return db
+    .query(
+      'SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;'
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+module.exports = {
+  selectTopics,
+  selectEndpoints,
+  selectArticle,
+  selectArticles,
+};

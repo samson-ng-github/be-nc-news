@@ -35,7 +35,7 @@ describe('GET /api', () => {
       .then(({ body }) => {
         for (const endpoint in body.endpoints)
           if (endpoint.startsWith('GET'))
-            expect(body.endpoints[endpoint]).toMatchObject({
+            expect(body.endpoints[endpoint]).toEqual({
               description: expect.any(String),
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
@@ -50,9 +50,10 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toMatchObject({
+        expect(body.article).toEqual({
           author: 'butter_bridge',
           title: 'Living in the shadow of a great man',
+          topic: 'mitch',
           article_id: 1,
           body: expect.any(String),
           created_at: expect.any(String),
@@ -78,6 +79,30 @@ describe('GET /api/articles/:article_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
+      });
+  });
+});
+
+describe('GET /api/articles', () => {
+  test('respond with 200 and return all articles', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(5);
+        expect(body.articles).toBeSorted('created_at', { descending: true });
+        body.articles.forEach((article) => {
+          expect(article).toEqual({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
       });
   });
 });
