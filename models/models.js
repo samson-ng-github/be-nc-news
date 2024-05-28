@@ -13,4 +13,12 @@ const selectEndpoints = () => {
     .then((data) => JSON.parse(data));
 };
 
-module.exports = { selectTopics, selectEndpoints };
+const selectArticle = (id) => {
+  return db
+    .query('SELECT * FROM articles WHERE article_id = $1', [id])
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+module.exports = { selectTopics, selectEndpoints, selectArticle };
