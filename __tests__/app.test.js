@@ -35,7 +35,7 @@ describe('GET /api', () => {
       .then(({ body }) => {
         for (const endpoint in body.endpoints)
           if (endpoint.startsWith('GET'))
-            expect(body.endpoints[endpoint]).toMatchObject({
+            expect(body.endpoints[endpoint]).toEqual({
               description: expect.any(String),
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
@@ -50,9 +50,10 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/1')
       .expect(200)
       .then(({ body }) => {
-        expect(body.article).toMatchObject({
+        expect(body.article).toEqual({
           author: 'butter_bridge',
           title: 'Living in the shadow of a great man',
+          topic: 'mitch',
           article_id: 1,
           body: expect.any(String),
           created_at: expect.any(String),

@@ -1,5 +1,6 @@
 const db = require('../db/connection');
 const fs = require('fs/promises');
+const endpoints = require('../endpoints.json');
 
 const selectTopics = () => {
   return db.query('SELECT * FROM topics').then(({ rows }) => {
@@ -8,9 +9,7 @@ const selectTopics = () => {
 };
 
 const selectEndpoints = () => {
-  return fs
-    .readFile(`${__dirname}/../endpoints.json`, 'utf8')
-    .then((data) => JSON.parse(data));
+  return Promise.resolve(endpoints);
 };
 
 const selectArticle = (id) => {
