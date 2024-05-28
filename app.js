@@ -4,6 +4,7 @@ const {
   getApi,
   getArticle,
   getArticles,
+  getCommentsByArticle,
 } = require('./controllers/controllers');
 const {
   handle400,
@@ -17,6 +18,7 @@ app.get('/api/topics', getTopics);
 app.get('/api', getApi);
 app.get('/api/articles/:article_id', getArticle);
 app.get('/api/articles', getArticles);
+app.get('/api/articles/:article_id/comments', getCommentsByArticle);
 app.get('*', (req, res, next) => {
   return Promise.reject({ status: 400, msg: 'Bad Request' }).catch(next);
 });
