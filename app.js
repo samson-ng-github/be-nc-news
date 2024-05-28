@@ -1,5 +1,9 @@
 const express = require('express');
-const { getTopics, sendBadRequest } = require('./controllers/controllers');
+const {
+  getTopics,
+  sendBadRequest,
+  getApi,
+} = require('./controllers/controllers');
 const {
   handle400,
   handle404,
@@ -10,6 +14,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/api/topics', getTopics);
+app.get('/api', getApi);
 app.get('*', sendBadRequest);
 
 app.use(handle400);
