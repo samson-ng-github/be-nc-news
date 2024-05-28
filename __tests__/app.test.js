@@ -45,7 +45,7 @@ describe('GET /api', () => {
 });
 
 describe('GET /api/articles/:article_id', () => {
-  test.only('respond with 200 and return article of that id', () => {
+  test('respond with 200 and return article of that id', () => {
     return request(app)
       .get('/api/articles/1')
       .expect(200)
@@ -63,7 +63,7 @@ describe('GET /api/articles/:article_id', () => {
       });
   });
 
-  test.only('respond with 404 Not Found if id does not exist', () => {
+  test('respond with 404 Not Found if id does not exist', () => {
     return request(app)
       .get('/api/articles/999')
       .expect(404)
@@ -71,10 +71,19 @@ describe('GET /api/articles/:article_id', () => {
         expect(body.msg).toBe('Not found');
       });
   });
+
+  test('respond with 400 Bad request if id is not a number', () => {
+    return request(app)
+      .get('/api/articles/banana')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
 });
 
 describe('GET unknown endpoint', () => {
-  test('respond with 400 if endpoint is known', () => {
+  test('respond with 400 if endpoint is unknown', () => {
     return request(app)
       .get('/banana')
       .expect(400)
