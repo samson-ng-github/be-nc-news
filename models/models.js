@@ -1,9 +1,16 @@
 const db = require('../db/connection');
+const fs = require('fs/promises');
 
-const selectTopics = (req, res, next) => {
+const selectTopics = () => {
   return db.query('SELECT * FROM topics').then(({ rows }) => {
     return rows;
   });
 };
 
-module.exports = { selectTopics };
+const selectEndpoints = () => {
+  return fs
+    .readFile(`${__dirname}/../endpoints.json`, 'utf8')
+    .then((data) => JSON.parse(data));
+};
+
+module.exports = { selectTopics, selectEndpoints };

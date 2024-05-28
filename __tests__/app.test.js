@@ -35,3 +35,21 @@ describe('GET /api/topics', () => {
       });
   });
 });
+
+describe('GET /api', () => {
+  test('respond with all available endpoints with descriptions', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        for (const endpoint in body.endpoints)
+          if (endpoint.startsWith('GET'))
+            expect(body.endpoints[endpoint]).toMatchObject({
+              description: expect.any(String),
+              queries: expect.any(Array),
+              exampleResponse: expect.any(Object),
+            });
+      });
+  });
+});
