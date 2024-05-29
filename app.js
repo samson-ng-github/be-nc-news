@@ -8,7 +8,7 @@ const {
   postCommentToArticle,
   patchArticle,
   deleteComment,
-  getUsers,
+  getUsers
 } = require('./controllers/controllers');
 const {
   handle400,

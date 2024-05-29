@@ -64,7 +64,7 @@ const insertCommentToArticle = (comment, id) => {
 
 const updateArticle = (update, id) => {
   const { inc_votes } = update;
-  if (!inc_votes && typeof inc_votes !== 'number')
+  if (!inc_votes || typeof inc_votes !== 'number')
     return Promise.reject({ status: 400, msg: 'Invalid update' });
 
   return db
