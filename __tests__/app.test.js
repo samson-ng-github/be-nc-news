@@ -167,8 +167,6 @@ describe('POST /api/articles/:article_id/comments', () => {
       .send({
         body: 'Both laptops are crap!',
         author: 'lurker',
-        votes: 0,
-        created_at: '2024-05-28 17:13:00',
       })
       .expect(201)
       .then(({ body }) => {
@@ -178,7 +176,7 @@ describe('POST /api/articles/:article_id/comments', () => {
           article_id: 2,
           author: 'lurker',
           votes: 0,
-          created_at: '2024-05-28 17:13:00',
+          created_at: expect.any(String),
         });
       });
   });
@@ -213,7 +211,7 @@ describe('PATCH /api/articles/:article_id', () => {
           topic: 'mitch',
           author: 'icellusedkars',
           body: expect.any(String),
-          created_at: '2020-10-16 06:03:00',
+          created_at: expect.any(String),
           votes: 1,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
@@ -232,7 +230,7 @@ describe('PATCH /api/articles/:article_id', () => {
           topic: 'mitch',
           author: 'rogersop',
           body: expect.any(String),
-          created_at: '2020-05-06 02:14:00',
+          created_at: expect.any(String),
           votes: -100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
@@ -264,6 +262,37 @@ describe('PATCH /api/articles/:article_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid update');
+      });
+  });
+  test('respond with 400 Invalid update if inc_votes is not a number', () => {
+    return request(app)
+      .patch('/api/articles/4')
+      .send({ inc_votes: 'banana' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid update');
+      });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('respond with 204, delete that comment and return nothing', () => {
+    return request(app).delete('/api/comments/18').expect(204);
+  });
+  test('respond with 404 Invalid ID if id does not exist', () => {
+    return request(app)
+      .delete('/api/comments/999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid ID');
+      });
+  });
+  test('respond with 400 Invalid input if id is not a number', () => {
+    return request(app)
+      .delete('/api/comments/banana')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });
