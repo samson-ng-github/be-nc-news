@@ -51,12 +51,13 @@ const selectCommentsByArticle = (id) => {
 
 const insertCommentToArticle = (comment, id) => {
   const { body, author } = comment;
+  if (!body || !author)
+    return Promise.reject({ status: 400, msg: 'Invalid comment' });
   const formattedStr = format(
     'INSERT INTO comments (body, article_id, author) VALUES %L RETURNING *;',
     [[body, id, author]]
   );
   return db.query(formattedStr).then(({ rows }) => {
-    if (!rows.length) return Promise.reject({ status: 404, msg: 'Invalid ID' });
     return rows[0];
   });
 };
@@ -84,8 +85,13 @@ const dropComment = (id) => {
     .then(({ rows }) => {
       if (!rows.length)
         return Promise.reject({ status: 404, msg: 'Invalid ID' });
-      return null;
     });
+};
+
+const selectUsers = () => {
+  return db.query('SELECT * FROM users').then(({ rows }) => {
+    return rows;
+  });
 };
 
 module.exports = {
@@ -97,4 +103,5 @@ module.exports = {
   insertCommentToArticle,
   updateArticle,
   dropComment,
+  selectUsers,
 };

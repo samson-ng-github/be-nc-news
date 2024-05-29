@@ -28,7 +28,7 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api', () => {
-  test('respond with 200 and return all available endpoints with descriptions', () => {
+  test.only('respond with 200 and return all available endpoints with descriptions', () => {
     return request(app)
       .get('/api')
       .expect(200)
@@ -40,12 +40,17 @@ describe('GET /api', () => {
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
             });
-          else if (endpoint.startsWith('POST'))
+          else if (endpoint.startsWith('POST') || endpoint.startsWith('PATCH'))
             expect(body.endpoints[endpoint]).toEqual({
               description: expect.any(String),
               queries: expect.any(Array),
               requestFormat: expect.any(Object),
               exampleResponse: expect.any(Object),
+            });
+          else if (endpoint.startsWith('DELETE'))
+            expect(body.endpoints[endpoint]).toEqual({
+              description: expect.any(String),
+              queries: expect.any(Array),
             });
       });
   });
@@ -182,7 +187,11 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
   test('respond with 404 Invalid ID if id does not exist', () => {
     return request(app)
-      .get('/api/articles/999/comments')
+      .post('/api/articles/999/comments')
+      .send({
+        body: 'Both laptops are crap!',
+        author: 'lurker',
+      })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid ID');
@@ -190,10 +199,24 @@ describe('POST /api/articles/:article_id/comments', () => {
   });
   test('respond with 400 Invalid input if id is not a number', () => {
     return request(app)
-      .get('/api/articles/banana/comments')
+      .post('/api/articles/banana/comments')
+      .send({
+        body: 'Both laptops are crap!',
+        author: 'lurker',
+        votes: 0,
+        created_at: '2024-05-28 17:13:00',
+      })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid input');
+      });
+  });
+  test('respond with 400 Invalid comment if not comment is provided', () => {
+    return request(app)
+      .post('/api/articles/banana/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid comment');
       });
   });
 });
@@ -293,6 +316,46 @@ describe('DELETE /api/comments/:comment_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid input');
+      });
+  });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+  test('respond with 204, delete that comment and return nothing', () => {
+    return request(app).delete('/api/comments/18').expect(204);
+  });
+  test('respond with 404 Invalid ID if id does not exist', () => {
+    return request(app)
+      .delete('/api/comments/999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid ID');
+      });
+  });
+  test('respond with 400 Invalid input if id is not a number', () => {
+    return request(app)
+      .delete('/api/comments/banana')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
+      });
+  });
+});
+
+describe('GET /api/users', () => {
+  test('respond with 200 and return all users', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });
