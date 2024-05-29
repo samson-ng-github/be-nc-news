@@ -40,6 +40,13 @@ describe('GET /api', () => {
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
             });
+          else if (endpoint.startsWith('POST'))
+            expect(body.endpoints[endpoint]).toEqual({
+              description: expect.any(String),
+              queries: expect.any(Array),
+              requestFormat: expect.any(Object),
+              exampleResponse: expect.any(Object),
+            });
       });
   });
 });
@@ -51,10 +58,10 @@ describe('GET /api/articles/:article_id', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.article).toEqual({
-          author: 'butter_bridge',
+          article_id: 1,
           title: 'Living in the shadow of a great man',
           topic: 'mitch',
-          article_id: 1,
+          author: 'butter_bridge',
           body: 'I find this existence challenging',
           created_at: '2020-07-09 21:11:00',
           votes: 100,
@@ -64,7 +71,7 @@ describe('GET /api/articles/:article_id', () => {
       });
   });
 
-  test('respond with 404 Not Found if id does not exist', () => {
+  test('respond with 404 Invalid ID if id does not exist', () => {
     return request(app)
       .get('/api/articles/999')
       .expect(404)
@@ -93,10 +100,10 @@ describe('GET /api/articles', () => {
         expect(body.articles).toBeSorted('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
-            author: expect.any(String),
-            title: expect.any(String),
             article_id: expect.any(Number),
+            title: expect.any(String),
             topic: expect.any(String),
+            author: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
@@ -118,11 +125,11 @@ describe('GET /api/articles/:article_id/comments', () => {
         body.comments.forEach((article) => {
           expect(article).toEqual({
             comment_id: expect.any(Number),
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-            author: expect.any(String),
             body: expect.any(String),
             article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
           });
         });
       });
@@ -135,7 +142,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test('respond with 404 Not Found if id does not exist', () => {
+  test('respond with 404 Invalid ID if id does not exist', () => {
     return request(app)
       .get('/api/articles/999/comments')
       .expect(404)
@@ -175,7 +182,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         });
       });
   });
-  test('respond with 404 Not Found if id does not exist', () => {
+  test('respond with 404 Invalid ID if id does not exist', () => {
     return request(app)
       .get('/api/articles/999/comments')
       .expect(404)
@@ -189,6 +196,74 @@ describe('POST /api/articles/:article_id/comments', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid input');
+      });
+  });
+});
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('respond with 200, increase votes and return that article', () => {
+    return request(app)
+      .patch('/api/articles/2')
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 2,
+          title: 'Sony Vaio; or, The Laptop',
+          topic: 'mitch',
+          author: 'icellusedkars',
+          body: expect.any(String),
+          created_at: '2020-10-16 06:03:00',
+          votes: 1,
+          article_img_url:
+            'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        });
+      });
+  });
+  test('respond with 200, decrease votes and return that article', () => {
+    return request(app)
+      .patch('/api/articles/4')
+      .send({ inc_votes: -100 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 4,
+          title: 'Student SUES Mitch!',
+          topic: 'mitch',
+          author: 'rogersop',
+          body: expect.any(String),
+          created_at: '2020-05-06 02:14:00',
+          votes: -100,
+          article_img_url:
+            'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        });
+      });
+  });
+  test('respond with 404 Invalid ID if id does not exist', () => {
+    return request(app)
+      .patch('/api/articles/999')
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid ID');
+      });
+  });
+  test('respond with 400 Invalid input if id is not a number', () => {
+    return request(app)
+      .patch('/api/articles/banana')
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
+      });
+  });
+  test('respond with 400 Invalid update if update provided in wrong format', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ banana: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid update');
       });
   });
 });

@@ -27,10 +27,10 @@
     "exampleResponse": {
       "article": [
         {
-          "author": "butter_bridge",
+          "article_id": 1,
           "title": "Living in the shadow of a great man",
           "topic": "mitch",
-          "article_id": 1,
+          "author": "butter_bridge",
           "body": "Text from the article..",
           "created_at": "2020-07-09 21:11:00",
           "votes": 100,
@@ -45,10 +45,10 @@
     "exampleResponse": {
       "articles": [
         {
-          "author": "rogersop",
-          "title": "UNCOVERED: catspiracy to bring down democracy",
           "article_id": 5,
+          "title": "UNCOVERED: catspiracy to bring down democracy",
           "topic": "cats",
+          "author": "rogersop",
           "created_at": "2020-08-03 14:14:00",
           "votes": 0,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -64,11 +64,11 @@
       "comments": [
         {
           "comment_id": 5,
-          "votes": 0,
-          "created_at": "2020-11-03 21:00:00",
-          "author": "icellusedkars",
           "body": "I hate streaming noses",
-          "article_id": 1
+          "article_id": 1,
+          "author": "icellusedkars",
+          "votes": 0,
+          "created_at": "2020-11-03 21:00:00"
         }
       ]
     }
@@ -77,10 +77,10 @@
     "description": "post a comment to that article",
     "queries": [],
     "requestFormat": {
-      "body": "Both laptops are crap!",
-      "author": "lurker",
-      "votes": 0,
-      "created_at": "2024-05-28 17:13:00"
+      "body": "string",
+      "author": "string",
+      "votes": "number",
+      "created_at": "string"
     },
     "exampleResponse": {
       "comment": [
@@ -91,6 +91,25 @@
           "author": "lurker",
           "votes": 0,
           "created_at": "2024-05-28 17:13:00"
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "update vote counts for that article",
+    "queries": [],
+    "requestFormat": { "inc_votes": "number" },
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 2,
+          "title": "Sony Vaio; or, The Laptop",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "Text from the article..",
+          "created_at": "2020-10-16 06:03:00",
+          "votes": 1,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }

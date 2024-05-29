@@ -6,6 +6,7 @@ const {
   getArticles,
   getCommentsByArticle,
   postCommentToArticle,
+  patchArticle,
 } = require('./controllers/controllers');
 const {
   handle400,
@@ -22,6 +23,7 @@ app.get('/api/articles/:article_id', getArticle);
 app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsByArticle);
 app.post('/api/articles/:article_id/comments', postCommentToArticle);
+app.patch('/api/articles/:article_id', patchArticle);
 app.get('*', (req, res, next) => {
   return Promise.reject({ status: 400, msg: 'Invalid input' }).catch(next);
 });
