@@ -56,7 +56,7 @@ describe('GET /api/articles/:article_id', () => {
           topic: 'mitch',
           article_id: 1,
           body: 'I find this existence challenging',
-          created_at: '2020-07-09T20:11:00.000Z',
+          created_at: '2020-07-09 21:11:00',
           votes: 100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
@@ -108,14 +108,14 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
-  test('respond with 200 and return all articles', () => {
+  test('respond with 200 and return all comments for that article', () => {
     return request(app)
       .get('/api/articles/1/comments')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(11);
-        expect(body.articles).toBeSorted('created_at', { descending: true });
-        body.articles.forEach((article) => {
+        expect(body.comments).toHaveLength(11);
+        expect(body.comments).toBeSorted('created_at', { descending: true });
+        body.comments.forEach((article) => {
           expect(article).toEqual({
             comment_id: expect.any(Number),
             votes: expect.any(Number),
@@ -135,7 +135,6 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Unknown ID');
       });
   });
-
   test('respond with 400 Bad request if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana/comments')
@@ -158,13 +157,13 @@ describe('POST /api/articles/:article_id/comments', () => {
       })
       .expect(201)
       .then(({ body }) => {
-        expect(body.article).toEqual({
+        expect(body.comment).toEqual({
           comment_id: 19,
           body: 'Both laptops are crap!',
           article_id: 2,
           author: 'lurker',
           votes: 0,
-          created_at: '2024-05-28T16:13:00.000Z',
+          created_at: '2024-05-28 17:13:00',
         });
       });
   });

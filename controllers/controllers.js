@@ -42,7 +42,7 @@ const getCommentsByArticle = (req, res, next) => {
   const { params } = req;
   return selectCommentsByArticle(params.article_id)
     .then((rows) => {
-      res.status(200).send({ articles: rows });
+      res.status(200).send({ comments: rows });
     })
     .catch(next);
 };
@@ -51,7 +51,7 @@ const postCommentToArticle = (req, res, next) => {
   const { body, params } = req;
   return insertCommentToArticle(body, params.article_id)
     .then((rows) => {
-      res.status(201).send({ article: rows });
+      res.status(201).send({ comment: rows });
     })
     .catch(next);
 };

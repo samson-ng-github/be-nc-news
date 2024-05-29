@@ -21,6 +21,24 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article by id",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "author": "butter_bridge",
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "article_id": 1,
+          "body": "Text from the article..",
+          "created_at": "2020-07-09 21:11:00",
+          "votes": 100,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -31,28 +49,10 @@
           "title": "UNCOVERED: catspiracy to bring down democracy",
           "article_id": 5,
           "topic": "cats",
-          "created_at": "2020-08-03T13:14:00.000Z",
+          "created_at": "2020-08-03 14:14:00",
           "votes": 0,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 2
-        }
-      ]
-    }
-  },
-  "GET /api/articles/:article_id": {
-    "description": "serves an article by id",
-    "queries": [],
-    "exampleResponse": {
-      "articles": [
-        {
-          "author": "butter_bridge",
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "article_id": 1,
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 100,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }
@@ -61,11 +61,11 @@
     "description": "serves an array of all comments for one article",
     "queries": [],
     "exampleResponse": {
-      "articles": [
+      "comments": [
         {
           "comment_id": 5,
           "votes": 0,
-          "created_at": "2020-11-03T21:00:00.000Z",
+          "created_at": "2020-11-03 21:00:00",
           "author": "icellusedkars",
           "body": "I hate streaming noses",
           "article_id": 1
@@ -76,15 +76,21 @@
   "POST /api/articles/:article_id/comments": {
     "description": "post a comment to that article",
     "queries": [],
+    "requestFormat": {
+      "body": "Both laptops are crap!",
+      "author": "lurker",
+      "votes": 0,
+      "created_at": "2024-05-28 17:13:00"
+    },
     "exampleResponse": {
-      "articles": [
+      "comment": [
         {
           "comment_id": 19,
           "body": "Both laptops are crap!",
           "article_id": 2,
           "author": "lurker",
           "votes": 0,
-          "created_at": "2024-05-28T16:13:00.000Z"
+          "created_at": "2024-05-28 17:13:00"
         }
       ]
     }
