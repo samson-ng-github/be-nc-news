@@ -71,7 +71,7 @@ const deleteComment = (req, res, next) => {
   const { params } = req;
   return dropComment(params.comment_id)
     .then(() => {
-      res.status(204).send({});
+      res.status(204).send();
     })
     .catch(next);
 };
