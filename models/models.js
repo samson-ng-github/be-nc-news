@@ -88,6 +88,12 @@ const dropComment = (id) => {
     });
 };
 
+const selectUsers = () => {
+  return db.query('SELECT * FROM users').then(({ rows }) => {
+    return rows;
+  });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
@@ -97,4 +103,5 @@ module.exports = {
   insertCommentToArticle,
   updateArticle,
   dropComment,
+  selectUsers,
 };

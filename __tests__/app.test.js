@@ -28,7 +28,7 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api', () => {
-  test('respond with 200 and return all available endpoints with descriptions', () => {
+  test.only('respond with 200 and return all available endpoints with descriptions', () => {
     return request(app)
       .get('/api')
       .expect(200)
@@ -40,12 +40,17 @@ describe('GET /api', () => {
               queries: expect.any(Array),
               exampleResponse: expect.any(Object),
             });
-          else if (endpoint.startsWith('POST'))
+          else if (endpoint.startsWith('POST') || endpoint.startsWith('PATCH'))
             expect(body.endpoints[endpoint]).toEqual({
               description: expect.any(String),
               queries: expect.any(Array),
               requestFormat: expect.any(Object),
               exampleResponse: expect.any(Object),
+            });
+          else if (endpoint.startsWith('DELETE'))
+            expect(body.endpoints[endpoint]).toEqual({
+              description: expect.any(String),
+              queries: expect.any(Array),
             });
       });
   });
@@ -302,6 +307,24 @@ describe('DELETE /api/comments/:comment_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid input');
+      });
+  });
+});
+
+describe('GET /api/users', () => {
+  test('respond with 200 and return all users', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });

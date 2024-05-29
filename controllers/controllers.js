@@ -7,6 +7,7 @@ const {
   insertCommentToArticle,
   updateArticle,
   dropComment,
+  selectUsers,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -76,6 +77,14 @@ const deleteComment = (req, res, next) => {
     .catch(next);
 };
 
+const getUsers = (req, res, next) => {
+  return selectUsers()
+    .then((rows) => {
+      res.status(200).send({ users: rows });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getApi,
@@ -85,4 +94,5 @@ module.exports = {
   postCommentToArticle,
   patchArticle,
   deleteComment,
+  getUsers,
 };
