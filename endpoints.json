@@ -78,9 +78,7 @@
     "queries": [],
     "requestFormat": {
       "body": "string",
-      "author": "string",
-      "votes": "number",
-      "created_at": "string"
+      "author": "string"
     },
     "exampleResponse": {
       "comment": [

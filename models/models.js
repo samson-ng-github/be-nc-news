@@ -50,10 +50,10 @@ const selectCommentsByArticle = (id) => {
 };
 
 const insertCommentToArticle = (comment, id) => {
-  const { body, author, votes, created_at } = comment;
+  const { body, author } = comment;
   const formattedStr = format(
-    "INSERT INTO comments (body, article_id, author, votes, created_at) VALUES %L RETURNING comment_id, body, article_id, author, votes, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at;",
-    [[body, id, author, votes, created_at]]
+    'INSERT INTO comments (body, article_id, author) VALUES %L RETURNING *;',
+    [[body, id, author]]
   );
   return db.query(formattedStr).then(({ rows }) => {
     if (!rows.length) return Promise.reject({ status: 404, msg: 'Invalid ID' });
@@ -63,19 +63,28 @@ const insertCommentToArticle = (comment, id) => {
 
 const updateArticle = (update, id) => {
   const { inc_votes } = update;
-  console.log(inc_votes);
-  if (!inc_votes && typeof inc_votes !== 'number')
+  if (!inc_votes || typeof inc_votes !== 'number')
     return Promise.reject({ status: 400, msg: 'Invalid update' });
 
   return db
     .query(
-      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING article_id, title, topic, author, body, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, votes, article_img_url;`,
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
       [inc_votes, id]
     )
     .then(({ rows }) => {
       if (!rows.length)
         return Promise.reject({ status: 404, msg: 'Invalid ID' });
       return rows[0];
+    });
+};
+
+const dropComment = (id) => {
+  return db
+    .query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [id])
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      return null;
     });
 };
 
@@ -87,4 +96,5 @@ module.exports = {
   selectCommentsByArticle,
   insertCommentToArticle,
   updateArticle,
+  dropComment,
 };
