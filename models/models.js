@@ -25,14 +25,32 @@ const selectArticle = (id) => {
     });
 };
 
-const selectArticles = () => {
-  return db
-    .query(
-      "SELECT articles.article_id, title, topic, articles.author, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;"
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+const selectArticles = (queries) => {
+  const { topic } = queries;
+  const queryList = ['topic'];
+  const topicList = ['mitch', 'cats', 'paper'];
+
+  for (const query in queries)
+    if (!queryList.includes(query))
+      return Promise.reject({ status: 400, msg: 'Invalid query' });
+
+  if (topic && !topicList.includes(topic)) {
+    return Promise.reject({ status: 400, msg: 'Invalid topic' });
+  }
+
+  let queryString =
+    "SELECT articles.article_id, title, topic, articles.author, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+  let queryValues = [];
+  if (topic) {
+    queryString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+  queryString +=
+    ' GROUP BY articles.article_id ORDER BY articles.created_at DESC;';
+
+  return db.query(queryString, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 const selectCommentsByArticle = (id) => {
