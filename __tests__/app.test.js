@@ -140,7 +140,6 @@ describe('GET /api/articles?topic', () => {
         });
       });
   });
-
   test('respond with 200 and return empty array if no articles with that topic', () => {
     return request(app)
       .get('/api/articles?topic=paper')
@@ -149,7 +148,6 @@ describe('GET /api/articles?topic', () => {
         expect(body.articles).toEqual([]);
       });
   });
-
   test('respond with 400 Invalid query if such topic does not exist', () => {
     return request(app)
       .get('/api/articles?topic=dinosaur')
@@ -158,7 +156,6 @@ describe('GET /api/articles?topic', () => {
         expect(body.msg).toBe('Invalid topic');
       });
   });
-
   test('respond with 400 Invalid query if such query does not exist', () => {
     return request(app)
       .get('/api/articles?topics=mitch')
