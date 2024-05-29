@@ -119,55 +119,55 @@ describe('GET /api/articles', () => {
   });
 });
 
-// describe('GET /api/articles?topic', () => {
-//   test('respond with 200 and return all articles with correct topics', () => {
-//     return request(app)
-//       .get('/api/articles?topic=mitch')
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(body.articles).toHaveLength(12);
-//         body.articles.forEach((article) => {
-//           expect(article).toEqual({
-//             article_id: expect.any(Number),
-//             title: expect.any(String),
-//             topic: expect.any(String),
-//             author: expect.any(String),
-//             created_at: expect.any(String),
-//             votes: expect.any(Number),
-//             article_img_url: expect.any(String),
-//             comment_count: expect.any(Number),
-//           });
-//         });
-//       });
-//   });
+describe('GET /api/articles?topic', () => {
+  test('respond with 200 and return all articles with correct topics', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        body.articles.forEach((article) => {
+          expect(article).toEqual({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
 
-//   test('respond with 200 and return empty array if no articles with that topic', () => {
-//     return request(app)
-//       .get('/api/articles?topic=paper')
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(body.articles).toEqual([]);
-//       });
-//   });
+  test('respond with 200 and return empty array if no articles with that topic', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
 
-//   test('respond with 400 Invalid query if such topic does not exist', () => {
-//     return request(app)
-//       .get('/api/articles?topic=dinosaur')
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body.msg).toBe('Invalid topic');
-//       });
-//   });
+  test('respond with 400 Invalid query if such topic does not exist', () => {
+    return request(app)
+      .get('/api/articles?topic=dinosaur')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid topic');
+      });
+  });
 
-//   test('respond with 400 Invalid query if such query does not exist', () => {
-//     return request(app)
-//       .get('/api/articles?topics=mitch')
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body.msg).toBe('Invalid query');
-//       });
-//   });
-// });
+  test('respond with 400 Invalid query if such query does not exist', () => {
+    return request(app)
+      .get('/api/articles?topics=mitch')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid query');
+      });
+  });
+});
 
 describe('GET /api/articles/:article_id/comments', () => {
   test('respond with 200 and return all comments for that article', () => {
