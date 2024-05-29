@@ -79,6 +79,16 @@ const updateArticle = (update, id) => {
     });
 };
 
+const dropComment = (id) => {
+  return db
+    .query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [id])
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      return null;
+    });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
@@ -87,4 +97,5 @@ module.exports = {
   selectCommentsByArticle,
   insertCommentToArticle,
   updateArticle,
+  dropComment,
 };
