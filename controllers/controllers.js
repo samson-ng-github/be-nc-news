@@ -34,8 +34,7 @@ const getArticle = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  const { query } = req;
-  return selectArticles(query)
+  return selectArticles()
     .then((rows) => {
       res.status(200).send({ articles: rows });
     })

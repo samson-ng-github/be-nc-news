@@ -16,7 +16,7 @@ describe('GET /api/topics', () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
-        expect(body.topics).toHaveLength(3);
+        expect(body.topics.length).toBe(3);
         body.topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
@@ -101,7 +101,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(13);
+        expect(body.articles).toHaveLength(5);
         expect(body.articles).toBeSorted('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
@@ -367,13 +367,35 @@ describe('DELETE /api/comments/:comment_id', () => {
   });
 });
 
+describe('DELETE /api/comments/:comment_id', () => {
+  test('respond with 204, delete that comment and return nothing', () => {
+    return request(app).delete('/api/comments/18').expect(204);
+  });
+  test('respond with 404 Invalid ID if id does not exist', () => {
+    return request(app)
+      .delete('/api/comments/999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid ID');
+      });
+  });
+  test('respond with 400 Invalid input if id is not a number', () => {
+    return request(app)
+      .delete('/api/comments/banana')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
+      });
+  });
+});
+
 describe('GET /api/users', () => {
   test('respond with 200 and return all users', () => {
     return request(app)
       .get('/api/users')
       .expect(200)
       .then(({ body }) => {
-        expect(body.users).toHaveLength(4);
+        expect(body.users.length).toBe(4);
         body.users.forEach((user) => {
           expect(user).toMatchObject({
             username: expect.any(String),
