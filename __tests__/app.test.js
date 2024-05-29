@@ -28,7 +28,7 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api', () => {
-  test.only('respond with 200 and return all available endpoints with descriptions', () => {
+  test('respond with 200 and return all available endpoints with descriptions', () => {
     return request(app)
       .get('/api')
       .expect(200)
