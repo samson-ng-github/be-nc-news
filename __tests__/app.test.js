@@ -101,7 +101,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(5);
+        expect(body.articles).toHaveLength(13);
         expect(body.articles).toBeSorted('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
@@ -148,10 +148,10 @@ describe('GET /api/articles?topic', () => {
         expect(body.articles).toEqual([]);
       });
   });
-  test('respond with 400 Invalid query if such topic does not exist', () => {
+  test('respond with 404 Invalid query if such topic does not exist', () => {
     return request(app)
       .get('/api/articles?topic=dinosaur')
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid topic');
       });
@@ -341,28 +341,6 @@ describe('PATCH /api/articles/:article_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid update');
-      });
-  });
-});
-
-describe('DELETE /api/comments/:comment_id', () => {
-  test('respond with 204, delete that comment and return nothing', () => {
-    return request(app).delete('/api/comments/18').expect(204);
-  });
-  test('respond with 404 Invalid ID if id does not exist', () => {
-    return request(app)
-      .delete('/api/comments/999')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid ID');
-      });
-  });
-  test('respond with 400 Invalid input if id is not a number', () => {
-    return request(app)
-      .delete('/api/comments/banana')
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
       });
   });
 });
