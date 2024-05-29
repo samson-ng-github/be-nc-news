@@ -16,7 +16,7 @@ describe('GET /api/topics', () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body }) => {
-        expect(body.topics.length).toBe(3);
+        expect(body.topics).toHaveLength(3);
         body.topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
@@ -101,7 +101,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(5);
+        expect(body.articles).toHaveLength(13);
         expect(body.articles).toBeSorted('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
@@ -118,6 +118,56 @@ describe('GET /api/articles', () => {
       });
   });
 });
+
+// describe('GET /api/articles?topic', () => {
+//   test('respond with 200 and return all articles with correct topics', () => {
+//     return request(app)
+//       .get('/api/articles?topic=mitch')
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body.articles).toHaveLength(12);
+//         body.articles.forEach((article) => {
+//           expect(article).toEqual({
+//             article_id: expect.any(Number),
+//             title: expect.any(String),
+//             topic: expect.any(String),
+//             author: expect.any(String),
+//             created_at: expect.any(String),
+//             votes: expect.any(Number),
+//             article_img_url: expect.any(String),
+//             comment_count: expect.any(Number),
+//           });
+//         });
+//       });
+//   });
+
+//   test('respond with 200 and return empty array if no articles with that topic', () => {
+//     return request(app)
+//       .get('/api/articles?topic=paper')
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body.articles).toEqual([]);
+//       });
+//   });
+
+//   test('respond with 400 Invalid query if such topic does not exist', () => {
+//     return request(app)
+//       .get('/api/articles?topic=dinosaur')
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe('Invalid topic');
+//       });
+//   });
+
+//   test('respond with 400 Invalid query if such query does not exist', () => {
+//     return request(app)
+//       .get('/api/articles?topics=mitch')
+//       .expect(400)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe('Invalid query');
+//       });
+//   });
+// });
 
 describe('GET /api/articles/:article_id/comments', () => {
   test('respond with 200 and return all comments for that article', () => {
@@ -320,35 +370,13 @@ describe('DELETE /api/comments/:comment_id', () => {
   });
 });
 
-describe('DELETE /api/comments/:comment_id', () => {
-  test('respond with 204, delete that comment and return nothing', () => {
-    return request(app).delete('/api/comments/18').expect(204);
-  });
-  test('respond with 404 Invalid ID if id does not exist', () => {
-    return request(app)
-      .delete('/api/comments/999')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid ID');
-      });
-  });
-  test('respond with 400 Invalid input if id is not a number', () => {
-    return request(app)
-      .delete('/api/comments/banana')
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
-      });
-  });
-});
-
 describe('GET /api/users', () => {
   test('respond with 200 and return all users', () => {
     return request(app)
       .get('/api/users')
       .expect(200)
       .then(({ body }) => {
-        expect(body.users.length).toBe(4);
+        expect(body.users).toHaveLength(4);
         body.users.forEach((user) => {
           expect(user).toMatchObject({
             username: expect.any(String),
