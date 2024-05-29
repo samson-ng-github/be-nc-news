@@ -1,5 +1,5 @@
 const handle400 = (err, req, res, next) => {
-  if (err.code) res.status(400).send({ msg: 'Bad request' });
+  if (err.code) res.status(400).send({ msg: 'Invalid input' });
   next(err);
 };
 

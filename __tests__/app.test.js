@@ -69,16 +69,16 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/999')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Unknown ID');
+        expect(body.msg).toBe('Invalid ID');
       });
   });
 
-  test('respond with 400 Bad request if id is not a number', () => {
+  test('respond with 400 Invalid input if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad request');
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });
@@ -127,20 +127,28 @@ describe('GET /api/articles/:article_id/comments', () => {
         });
       });
   });
+  test('respond with 200 with empty array if that article has no comments', () => {
+    return request(app)
+      .get('/api/articles/10/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
   test('respond with 404 Not Found if id does not exist', () => {
     return request(app)
       .get('/api/articles/999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Unknown ID');
+        expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Bad request if id is not a number', () => {
+  test('respond with 400 Invalid input if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad request');
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });
@@ -172,15 +180,15 @@ describe('POST /api/articles/:article_id/comments', () => {
       .get('/api/articles/999/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Unknown ID');
+        expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Bad request if id is not a number', () => {
+  test('respond with 400 Invalid input if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad request');
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });
@@ -191,7 +199,7 @@ describe('GET unknown endpoint', () => {
       .get('/banana')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Bad Request');
+        expect(body.msg).toBe('Invalid input');
       });
   });
 });

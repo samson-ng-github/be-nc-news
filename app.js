@@ -23,7 +23,7 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsByArticle);
 app.post('/api/articles/:article_id/comments', postCommentToArticle);
 app.get('*', (req, res, next) => {
-  return Promise.reject({ status: 400, msg: 'Bad Request' }).catch(next);
+  return Promise.reject({ status: 400, msg: 'Invalid input' }).catch(next);
 });
 
 app.use(handle400);
