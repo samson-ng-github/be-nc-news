@@ -1,10 +1,11 @@
 const handle400 = (err, req, res, next) => {
-  if (err.code) res.status(400).send({ msg: 'Invalid input' });
+  if (err.code === '22P02') res.status(400).send({ msg: 'Invalid input' });
   next(err);
 };
 
 const handle404 = (err, req, res, next) => {
   if (err.msg) res.status(err.status).send({ msg: err.msg });
+  if (err.code === '23503') res.status(404).send({ msg: 'Invalid ID' });
   next(err);
 };
 
