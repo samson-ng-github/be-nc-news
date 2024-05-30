@@ -86,7 +86,7 @@ describe('GET /api/articles/:article_id', () => {
       });
   });
 
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana')
       .expect(400)
@@ -165,7 +165,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .get('/api/articles/banana/comments')
       .expect(400)
@@ -301,7 +301,7 @@ describe('PATCH /api/articles/:article_id', () => {
         expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .patch('/api/articles/banana')
       .send({ inc_votes: 1 })
@@ -342,7 +342,7 @@ describe('DELETE /api/comments/:comment_id', () => {
         expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .delete('/api/comments/banana')
       .expect(400)
@@ -540,7 +540,7 @@ describe('PATCH /api/comments/:comment_id', () => {
         expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .patch('/api/comments/banana')
       .send({ inc_votes: 7 })

@@ -13,6 +13,8 @@ const selectEndpoints = () => {
 };
 
 const selectArticleByID = (id) => {
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
   return db
     .query(
       "SELECT articles.article_id, title, topic, articles.author, articles.body, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;",
@@ -70,6 +72,8 @@ const selectArticles = (queries) => {
 };
 
 const selectCommentsByArticle = (id) => {
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
   return db
     .query(
       "SELECT comments.comment_id, comments.body, comments.article_id, comments.author, comments.votes, TO_CHAR(comments.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 ORDER BY comments.created_at DESC;",
@@ -116,6 +120,8 @@ const insertCommentToArticle = (comment, id) => {
 
 const updateArticle = (update, id) => {
   const { inc_votes } = update;
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
   if (!inc_votes || typeof inc_votes !== 'number')
     return Promise.reject({ status: 400, msg: 'Invalid update' });
 
@@ -132,6 +138,8 @@ const updateArticle = (update, id) => {
 };
 
 const dropComment = (id) => {
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
   return db
     .query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [id])
     .then(({ rows }) => {
@@ -158,6 +166,8 @@ const selectUserByID = (username) => {
 
 const updateComment = (update, id) => {
   const { inc_votes } = update;
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
   if (!inc_votes || typeof inc_votes !== 'number')
     return Promise.reject({ status: 400, msg: 'Invalid update' });
 

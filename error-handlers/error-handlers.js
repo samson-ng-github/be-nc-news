@@ -1,5 +1,5 @@
 const handle400 = (err, req, res, next) => {
-  if (err.code === '22P02') res.status(400).send({ msg: 'ID is not a number' });
+  if (err.code) res.status(400).send({ msg: 'PSQL error' });
   next(err);
 };
 
