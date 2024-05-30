@@ -2,11 +2,23 @@
 
 This is a backend development project I did on the Northcoders software developmemt bootcamp.
 
-You can visit the hosted version at https://be-nc-news-v1e2.onrender.com/api.
+It is a database for a news article article website similar to BBC.
 
-It will give you a list of endpoints to access the information across four tables: articles, comments, topics and users.
+In the database there are four tables: articles, comments, topics and users.
 
-This is how you can clone run and test the project on your local machine.
+You can interact with the database and retrieve the data using various endpoints.
+
+For example you can retrieve the whole list or a single item from the four tables,
+
+get all the comments that belong to one article, topic or user,
+
+post new items to the tables, as well as update or delete existing items.
+
+You can also sort and filter the lists with a number of parameters.
+
+Please find the hosted version at https://be-nc-news-v1e2.onrender.com/api.
+
+This is how you can clone run, set up test the project on your local machine.
 
 1. Go to https://github.com/samson-ng-github/be-nc-news, click code and copy the HTTPS address.
 

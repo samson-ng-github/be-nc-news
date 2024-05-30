@@ -85,15 +85,33 @@ const selectCommentsByArticle = (id) => {
 
 const insertCommentToArticle = (comment, id) => {
   const { body, author } = comment;
+
   if (!body || !author)
     return Promise.reject({ status: 400, msg: 'Invalid comment' });
-  const formattedStr = format(
-    'INSERT INTO comments (body, article_id, author) VALUES %L RETURNING *;',
-    [[body, id, author]]
-  );
-  return db.query(formattedStr).then(({ rows }) => {
-    return rows[0];
-  });
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
+
+  const promiseArr = [
+    db.query('SELECT article_id FROM articles'),
+    db.query('SELECT username FROM users'),
+  ];
+
+  return Promise.all(promiseArr)
+    .then(([article_ids, users]) => {
+      if (!article_ids.rows.some((item) => item.article_id === Number(id)))
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      if (!users.rows.some((item) => item.username === author))
+        return Promise.reject({ status: 404, msg: 'Invalid author' });
+
+      const formattedStr = format(
+        'INSERT INTO comments (body, article_id, author) VALUES %L RETURNING *;',
+        [[body, id, author]]
+      );
+      return db.query(formattedStr);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };
 
 const updateArticle = (update, id) => {
@@ -155,6 +173,34 @@ const updateComment = (update, id) => {
     });
 };
 
+const insertArticle = (article, id) => {
+  const { title, topic, author, body } = article;
+  if (!title || !topic || !author || !body)
+    return Promise.reject({ status: 400, msg: 'Invalid article' });
+
+  const promiseArr = [
+    db.query('SELECT slug FROM topics'),
+    db.query('SELECT username FROM users'),
+  ];
+
+  return Promise.all(promiseArr)
+    .then(([topics, users]) => {
+      if (!topics.rows.some((item) => item.slug === topic))
+        return Promise.reject({ status: 404, msg: 'Invalid topic' });
+      if (!users.rows.some((item) => item.username === author))
+        return Promise.reject({ status: 404, msg: 'Invalid author' });
+
+      const formattedStr = format(
+        'INSERT INTO articles (title, topic, author, body) VALUES %L RETURNING *;',
+        [[title, topic, author, body]]
+      );
+      return db.query(formattedStr);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
@@ -167,4 +213,5 @@ module.exports = {
   selectUsers,
   selectUserByID,
   updateComment,
+  insertArticle,
 };

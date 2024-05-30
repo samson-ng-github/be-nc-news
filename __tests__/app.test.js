@@ -207,28 +207,50 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Invalid ID');
       });
   });
-  test('respond with 400 Invalid input if id is not a number', () => {
+  test('respond with 400 ID is not a number if id is not a number', () => {
     return request(app)
       .post('/api/articles/banana/comments')
       .send({
         body: 'Both laptops are crap!',
         author: 'lurker',
-        votes: 0,
-        created_at: '2024-05-28 17:13:00',
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
-  test('respond with 400 Invalid comment if not comment is provided', () => {
+  test('respond with 400 Invalid comment if no comment is provided', () => {
     return request(app)
-      .post('/api/articles/banana/comments')
+      .post('/api/articles/2/comments')
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid comment');
       });
   });
+  test('respond with 400 Invalid comment if comment provided with wrong format', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        content: 'Both laptops are crap!',
+        writer: 'lurker',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid comment');
+      });
+  });
+  // test('respond with 400 Invalid author if author does not exist', () => {
+  //   return request(app)
+  //     .post('/api/articles/2/comments')
+  //     .send({
+  //       body: 'Both laptops are crap!',
+  //       author: 'banana',
+  //     })
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe('Invalid author');
+  //     });
+  // });
 });
 
 describe('PATCH /api/articles/:article_id', () => {
@@ -543,6 +565,80 @@ describe('PATCH /api/comments/:comment_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid update');
+      });
+  });
+});
+
+describe('POST /api/articles', () => {
+  test('respond with 201 and add that article', () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        title: 'How to make an object fly',
+        topic: 'paper',
+        author: 'lurker',
+        body: 'Wingardium Leviosa',
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: expect.any(Number),
+          title: 'How to make an object fly',
+          topic: 'paper',
+          author: 'lurker',
+          body: 'Wingardium Leviosa',
+          created_at: expect.any(String),
+          votes: 0,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test('respond with 404 Invalid author if author does not exist', () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        title: 'How to make an object fly',
+        topic: 'paper',
+        author: 'hermione_granger',
+        body: 'Wingardium Leviosa',
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid author');
+      });
+  });
+  test('respond with 404 Invalid topic if topic does not exist', () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        title: 'How to make an object fly',
+        topic: 'magic',
+        author: 'lurker',
+        body: 'Wingardium Leviosa',
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid topic');
+      });
+  });
+  test('respond with 400 Invalid article if no article is provided', () => {
+    return request(app)
+      .post('/api/articles')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid article');
+      });
+  });
+  test('respond with 400 Invalid article if article provided with wrong format', () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        content: 'Wingardium Leviosa',
+        writer: 'lurker',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid article');
       });
   });
 });
