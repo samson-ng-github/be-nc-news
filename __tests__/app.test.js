@@ -700,6 +700,14 @@ describe('GET /api/articles?limit&p', () => {
         expect(body.articles[4].article_id).toBe(4);
       });
   });
+  test.only('respond with 200 and total_count property, displaying the total number of articles', () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&p=2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(3);
+      });
+  });
 });
 
 describe('GET unknown endpoint', () => {

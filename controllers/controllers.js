@@ -40,7 +40,7 @@ const getArticles = (req, res, next) => {
   const { query } = req;
   return selectArticles(query)
     .then((rows) => {
-      res.status(200).send({ articles: rows });
+      res.status(200).send({ articles: rows, total_count: rows.length });
     })
     .catch(next);
 };
