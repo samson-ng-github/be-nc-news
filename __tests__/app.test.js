@@ -72,6 +72,7 @@ describe('GET /api/articles/:article_id', () => {
           votes: 100,
           article_img_url:
             'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+          comment_count: 11,
         });
       });
   });
@@ -91,6 +92,15 @@ describe('GET /api/articles/:article_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid input');
+      });
+  });
+
+  test('respond with 200 should come with comment_count, which is the total count of all the comments', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe(11);
       });
   });
 });
@@ -115,53 +125,6 @@ describe('GET /api/articles', () => {
             comment_count: expect.any(Number),
           });
         });
-      });
-  });
-});
-
-describe('GET /api/articles?topic', () => {
-  test('respond with 200 and return all articles with correct topics', () => {
-    return request(app)
-      .get('/api/articles?topic=mitch')
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toHaveLength(12);
-        body.articles.forEach((article) => {
-          expect(article).toEqual({
-            article_id: expect.any(Number),
-            title: expect.any(String),
-            topic: expect.any(String),
-            author: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-            comment_count: expect.any(Number),
-          });
-        });
-      });
-  });
-  test('respond with 200 and return empty array if no articles with that topic', () => {
-    return request(app)
-      .get('/api/articles?topic=paper')
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toEqual([]);
-      });
-  });
-  test('respond with 404 Invalid query if such topic does not exist', () => {
-    return request(app)
-      .get('/api/articles?topic=dinosaur')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid topic');
-      });
-  });
-  test('respond with 400 Invalid query if such query does not exist', () => {
-    return request(app)
-      .get('/api/articles?topics=mitch')
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe('Invalid query');
       });
   });
 });
@@ -381,6 +344,53 @@ describe('GET /api/users', () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe('GET /api/articles?topic', () => {
+  test('respond with 200 and return all articles with correct topics', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        body.articles.forEach((article) => {
+          expect(article).toEqual({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test('respond with 200 and return empty array if no articles with that topic', () => {
+    return request(app)
+      .get('/api/articles?topic=paper')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
+  test('respond with 404 Invalid query if such topic does not exist', () => {
+    return request(app)
+      .get('/api/articles?topic=dinosaur')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid topic');
+      });
+  });
+  test('respond with 400 Invalid query if such query does not exist', () => {
+    return request(app)
+      .get('/api/articles?topics=mitch')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid query');
       });
   });
 });
