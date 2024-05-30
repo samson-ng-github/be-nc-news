@@ -476,6 +476,77 @@ describe('GET /api/users/:username', () => {
   });
 });
 
+describe('PATCH /api/comments/:comment_id', () => {
+  test('respond with 200, increase votes and return that comment', () => {
+    return request(app)
+      .patch('/api/comments/14')
+      .send({ inc_votes: 4 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: 14,
+          body: expect.any(String),
+          article_id: 5,
+          author: 'icellusedkars',
+          votes: 20,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test('respond with 200, decrease votes and return that comment', () => {
+    return request(app)
+      .patch('/api/comments/3')
+      .send({ inc_votes: -100 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: 3,
+          body: expect.any(String),
+          article_id: 1,
+          author: 'icellusedkars',
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test('respond with 404 Invalid ID if id does not exist', () => {
+    return request(app)
+      .patch('/api/comments/999')
+      .send({ inc_votes: 4 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid ID');
+      });
+  });
+  test('respond with 400 Invalid input if id is not a number', () => {
+    return request(app)
+      .patch('/api/comments/banana')
+      .send({ inc_votes: 7 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
+      });
+  });
+  test('respond with 400 Invalid update if update provided in wrong format', () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({ banana: 2 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid update');
+      });
+  });
+  test('respond with 400 Invalid update if inc_votes is not a number', () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({ inc_votes: 'banana' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid update');
+      });
+  });
+});
+
 describe('GET unknown endpoint', () => {
   test('respond with 400 if endpoint is unknown', () => {
     return request(app)
