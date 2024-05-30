@@ -78,13 +78,26 @@ const selectArticles = (queries) => {
   });
 };
 
-const selectCommentsByArticle = (id) => {
+const selectCommentsByArticle = (id, queries) => {
+  let { limit, p } = queries;
+  limit = limit || 10;
+  p = p || 1;
+
+  console.log(limit, limit * (p - 1));
+
   if (isNaN(Number(id)))
     return Promise.reject({ status: 400, msg: 'ID is not a number' });
+
+  if (isNaN(Number(limit)))
+    return Promise.reject({ status: 400, msg: 'limit is not a number' });
+
+  if (isNaN(Number(p)))
+    return Promise.reject({ status: 400, msg: 'p is not a number' });
+
   return db
     .query(
-      "SELECT comments.comment_id, comments.body, comments.article_id, comments.author, comments.votes, TO_CHAR(comments.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 ORDER BY comments.created_at DESC;",
-      [id]
+      "SELECT comments.comment_id, comments.body, comments.article_id, comments.author, comments.votes, TO_CHAR(comments.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 ORDER BY comments.created_at DESC LIMIT $2 OFFSET $3;",
+      [id, limit, limit * (p - 1)]
     )
     .then(({ rows }) => {
       if (!rows.length)
