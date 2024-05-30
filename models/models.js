@@ -27,17 +27,34 @@ const selectArticle = (id) => {
 };
 
 const selectArticles = (queries) => {
-  const { topic } = queries;
-  const queryList = ['topic'];
+  let { topic, sort_by, order } = queries;
+  sort_by = sort_by || 'created_at';
+  order = order || 'desc';
+  const queryList = ['topic', 'sort_by', 'order'];
   const topicList = ['mitch', 'cats', 'paper'];
+  const sortByList = [
+    'article_id',
+    'title',
+    'topic',
+    'author',
+    'created_at',
+    'votes',
+    'article_img_url',
+  ];
+  const orderList = ['desc', 'asc'];
 
   for (const query in queries)
     if (!queryList.includes(query))
       return Promise.reject({ status: 400, msg: 'Invalid query' });
 
-  if (topic && !topicList.includes(topic)) {
-    return Promise.reject({ status: 404, msg: 'Invalid topic' });
-  }
+  if (topic && !topicList.includes(topic))
+    return Promise.reject({ status: 404, msg: 'Invalid topic type' });
+
+  if (!sortByList.includes(sort_by))
+    return Promise.reject({ status: 404, msg: 'Invalid sort_by type' });
+
+  if (!orderList.includes(order))
+    return Promise.reject({ status: 404, msg: 'Invalid order type' });
 
   let queryString =
     "SELECT articles.article_id, title, topic, articles.author, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
@@ -46,8 +63,7 @@ const selectArticles = (queries) => {
     queryString += ` WHERE topic = $1`;
     queryValues.push(topic);
   }
-  queryString +=
-    ' GROUP BY articles.article_id ORDER BY articles.created_at DESC;';
+  queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toUpperCase()};`;
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;

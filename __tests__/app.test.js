@@ -112,7 +112,7 @@ describe('GET /api/articles', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(13);
-        expect(body.articles).toBeSorted('created_at', { descending: true });
+        expect(body.articles).toBeSortedBy('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
             article_id: expect.any(Number),
@@ -136,7 +136,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toHaveLength(11);
-        expect(body.comments).toBeSorted('created_at', { descending: true });
+        expect(body.comments).toBeSortedBy('created_at', { descending: true });
         body.comments.forEach((article) => {
           expect(article).toEqual({
             comment_id: expect.any(Number),
@@ -377,17 +377,73 @@ describe('GET /api/articles?topic', () => {
         expect(body.articles).toEqual([]);
       });
   });
-  test('respond with 404 Invalid query if such topic does not exist', () => {
+  test('respond with 404 Invalid topic type if such topic does not exist', () => {
     return request(app)
       .get('/api/articles?topic=dinosaur')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid topic');
+        expect(body.msg).toBe('Invalid topic type');
       });
   });
   test('respond with 400 Invalid query if such query does not exist', () => {
     return request(app)
       .get('/api/articles?topics=mitch')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid query');
+      });
+  });
+});
+
+describe('GET /api/articles?sort_by', () => {
+  test('respond with 200 and return the articles sorted by the keyword', () => {
+    return request(app)
+      .get('/api/articles?sort_by=title')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(13);
+        expect(body.articles).toBeSortedBy('title', { descending: true });
+      });
+  });
+  test('respond with 404 Invalid sort_by type if sort_by type does not exist', () => {
+    return request(app)
+      .get('/api/articles?sort_by=banana')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid sort_by type');
+      });
+  });
+  test('respond with 400 Invalid query if such query does not exist', () => {
+    return request(app)
+      .get('/api/articles?sorted_by=title')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid query');
+      });
+  });
+});
+
+describe('GET /api/articles?order', () => {
+  test('respond with 200 and return the articles ordered by the keyword', () => {
+    return request(app)
+      .get('/api/articles?order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(13);
+        expect(body.articles).toBeSortedBy('created_at');
+      });
+  });
+  test('respond with 404 Invalid order type if order type does not exist', () => {
+    return request(app)
+      .get('/api/articles?order=banana')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid order type');
+      });
+  });
+  test('respond with 400 Invalid query if such query does not exist', () => {
+    return request(app)
+      .get('/api/articles?ordered=asc')
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Invalid query');
