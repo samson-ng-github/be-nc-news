@@ -138,6 +138,23 @@ const selectUserByID = (username) => {
     });
 };
 
+const updateComment = (update, id) => {
+  const { inc_votes } = update;
+  if (!inc_votes || typeof inc_votes !== 'number')
+    return Promise.reject({ status: 400, msg: 'Invalid update' });
+
+  return db
+    .query(
+      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      return rows[0];
+    });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
@@ -149,4 +166,5 @@ module.exports = {
   dropComment,
   selectUsers,
   selectUserByID,
+  updateComment,
 };
