@@ -46,8 +46,8 @@ const getArticles = (req, res, next) => {
 };
 
 const getCommentsByArticle = (req, res, next) => {
-  const { params } = req;
-  return selectCommentsByArticle(params.article_id)
+  const { params, query } = req;
+  return selectCommentsByArticle(params.article_id, query)
     .then((rows) => {
       res.status(200).send({ comments: rows });
     })
