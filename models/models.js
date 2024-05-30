@@ -231,6 +231,20 @@ const insertArticle = (article, id) => {
     });
 };
 
+const insertTopic = (article, id) => {
+  const { slug, description } = article;
+  if (!slug || !description)
+    return Promise.reject({ status: 400, msg: 'Invalid topic' });
+
+  const formattedStr = format(
+    'INSERT INTO topics (slug, description) VALUES %L RETURNING *;',
+    [[slug, description]]
+  );
+  return db.query(formattedStr).then(({ rows }) => {
+    return rows[0];
+  });
+};
+
 module.exports = {
   selectTopics,
   selectEndpoints,
@@ -244,4 +258,5 @@ module.exports = {
   selectUserByID,
   updateComment,
   insertArticle,
+  insertTopic,
 };
