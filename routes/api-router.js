@@ -11,14 +11,12 @@ const {
 
 apiRouter.route('/').get(getApi);
 
-apiRouter.route('/topics').get(getTopics);
-
-//apiRouter.route('/comments/:comment_id').delete(deleteComment);
-
 apiRouter.use('/articles', articlesRouter);
 
 apiRouter.use('/users', usersRouter);
 
 apiRouter.use('/comments', commentsRouter);
+
+apiRouter.route('/topics').get(getTopics);
 
 module.exports = apiRouter;
