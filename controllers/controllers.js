@@ -24,7 +24,7 @@ const getApi = (req, res, next) => {
   });
 };
 
-const getArticle = (req, res, next) => {
+const getArticleByID = (req, res, next) => {
   const { params } = req;
   return selectArticle(params.article_id)
     .then((rows) => {
@@ -89,7 +89,7 @@ const getUsers = (req, res, next) => {
 module.exports = {
   getTopics,
   getApi,
-  getArticle,
+  getArticleByID,
   getArticles,
   getCommentsByArticle,
   postCommentToArticle,
