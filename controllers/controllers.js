@@ -1,13 +1,14 @@
 const {
   selectTopics,
   selectEndpoints,
-  selectArticle,
+  selectArticleByID,
   selectArticles,
   selectCommentsByArticle,
   insertCommentToArticle,
   updateArticle,
   dropComment,
   selectUsers,
+  selectUserByID,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -26,7 +27,7 @@ const getApi = (req, res, next) => {
 
 const getArticleByID = (req, res, next) => {
   const { params } = req;
-  return selectArticle(params.article_id)
+  return selectArticleByID(params.article_id)
     .then((rows) => {
       res.status(200).send({ article: rows });
     })
@@ -86,6 +87,15 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
+const getUserByID = (req, res, next) => {
+  const { params } = req;
+  return selectUserByID(params.username)
+    .then((rows) => {
+      res.status(200).send({ user: rows });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getApi,
@@ -96,4 +106,5 @@ module.exports = {
   patchArticle,
   deleteComment,
   getUsers,
+  getUserByID,
 };

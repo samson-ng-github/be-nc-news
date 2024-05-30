@@ -451,6 +451,31 @@ describe('GET /api/articles?order', () => {
   });
 });
 
+describe('GET /api/users/:username', () => {
+  test('respond with 200 and return user with that username', () => {
+    return request(app)
+      .get('/api/users/butter_bridge')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual({
+          username: 'butter_bridge',
+          avatar_url:
+            'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg',
+          name: 'jonny',
+        });
+      });
+  });
+
+  test('respond with 404 Invalid username if username does not exist', () => {
+    return request(app)
+      .get('/api/users/banana')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid username');
+      });
+  });
+});
+
 describe('GET unknown endpoint', () => {
   test('respond with 400 if endpoint is unknown', () => {
     return request(app)

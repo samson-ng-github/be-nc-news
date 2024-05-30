@@ -1,5 +1,6 @@
 const apiRouter = require('express').Router();
 const articlesRouter = require('./articles-router');
+const usersRouter = require('./users-router');
 
 const {
   getTopics,
@@ -14,8 +15,8 @@ apiRouter.route('/topics').get(getTopics);
 
 apiRouter.route('/comments/:comment_id').delete(deleteComment);
 
-apiRouter.route('/users').get(getUsers);
-
 apiRouter.use('/articles', articlesRouter);
+
+apiRouter.use('/users', usersRouter);
 
 module.exports = apiRouter;
