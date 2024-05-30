@@ -10,6 +10,7 @@ const {
   selectUsers,
   selectUserByID,
   updateComment,
+  insertArticle,
 } = require('../models/models');
 
 const getTopics = (req, res, next) => {
@@ -106,6 +107,15 @@ const patchComment = (req, res, next) => {
     .catch(next);
 };
 
+const postArticle = (req, res, next) => {
+  const { body, params } = req;
+  return insertArticle(body, params.article_id)
+    .then((rows) => {
+      res.status(201).send({ article: rows });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getTopics,
   getApi,
@@ -118,4 +128,5 @@ module.exports = {
   getUsers,
   getUserByID,
   patchComment,
+  postArticle,
 };
