@@ -766,6 +766,44 @@ describe('GET /api/articles/:article_id/comments?limit&p', () => {
   });
 });
 
+describe('POST /api/topics', () => {
+  test('respond with 201 and add that topic', () => {
+    return request(app)
+      .post('/api/topics')
+      .send({
+        slug: 'magic',
+        description: 'How to summon a unicorn',
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.topic).toEqual({
+          slug: 'magic',
+          description: 'How to summon a unicorn',
+        });
+      });
+  });
+  test('respond with 400 Invalid topic if no topic is provided', () => {
+    return request(app)
+      .post('/api/topics')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid topic');
+      });
+  });
+  test('respond with 400 Invalid topic if topic provided with wrong format', () => {
+    return request(app)
+      .post('/api/topics')
+      .send({
+        topic: 'magic',
+        explanation: 'How to summon a unicorn',
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid topic');
+      });
+  });
+});
+
 describe('GET unknown endpoint', () => {
   test('respond with 400 if endpoint is unknown', () => {
     return request(app)
