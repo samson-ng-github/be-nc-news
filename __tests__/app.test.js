@@ -91,7 +91,7 @@ describe('GET /api/articles/:article_id', () => {
       .get('/api/articles/banana')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
 
@@ -170,7 +170,7 @@ describe('GET /api/articles/:article_id/comments', () => {
       .get('/api/articles/banana/comments')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
 });
@@ -239,18 +239,18 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('Invalid comment');
       });
   });
-  // test('respond with 400 Invalid author if author does not exist', () => {
-  //   return request(app)
-  //     .post('/api/articles/2/comments')
-  //     .send({
-  //       body: 'Both laptops are crap!',
-  //       author: 'banana',
-  //     })
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe('Invalid author');
-  //     });
-  // });
+  test('respond with 404 Invalid author if author does not exist', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({
+        body: 'Both laptops are crap!',
+        author: 'banana',
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid author');
+      });
+  });
 });
 
 describe('PATCH /api/articles/:article_id', () => {
@@ -307,7 +307,7 @@ describe('PATCH /api/articles/:article_id', () => {
       .send({ inc_votes: 1 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
   test('respond with 400 Invalid update if update provided in wrong format', () => {
@@ -347,7 +347,7 @@ describe('DELETE /api/comments/:comment_id', () => {
       .delete('/api/comments/banana')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
 });
@@ -546,7 +546,7 @@ describe('PATCH /api/comments/:comment_id', () => {
       .send({ inc_votes: 7 })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('ID is not a number');
       });
   });
   test('respond with 400 Invalid update if update provided in wrong format', () => {
@@ -649,7 +649,7 @@ describe('GET unknown endpoint', () => {
       .get('/banana')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('Invalid endpoint');
       });
   });
 });

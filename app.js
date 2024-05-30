@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use('/api', apiRouter);
 app.get('*', (req, res, next) => {
-  return Promise.reject({ status: 400, msg: 'Invalid input' }).catch(next);
+  return Promise.reject({ status: 400, msg: 'Invalid endpoint' }).catch(next);
 });
 
 app.use(handle400);

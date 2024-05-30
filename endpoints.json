@@ -159,5 +159,29 @@
         }
       ]
     }
+  },
+  "POST /api/articles": {
+    "description": "post a new article",
+    "queries": [],
+    "requestFormat": {
+      "title": "How to make an object fly",
+      "topic": "paper",
+      "author": "lurker",
+      "body": "Wingardium Leviosa"
+    },
+    "exampleResponse": {
+      "comment": [
+        {
+          "article_id": 14,
+          "title": "How to make an object fly",
+          "topic": "paper",
+          "author": "lurker",
+          "body": "Text from the article..",
+          "created_at": "2020-10-11 12:24:00",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
   }
 }
