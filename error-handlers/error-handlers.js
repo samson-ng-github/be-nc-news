@@ -9,7 +9,6 @@ const handle404 = (err, req, res, next) => {
 };
 
 const handle500 = (err, req, res, next) => {
-  console.log(err);
   if (err.msg) res.status(500).send({ msg: 'Unknown error' });
 };
 

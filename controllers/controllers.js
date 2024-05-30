@@ -1,31 +1,42 @@
 const {
-  selectTopics,
   selectEndpoints,
-  selectArticleByID,
   selectArticles,
+  insertArticle,
+  selectArticleByID,
+  updateArticle,
+  dropArticle,
   selectCommentsByArticle,
   insertCommentToArticle,
-  updateArticle,
+  updateComment,
   dropComment,
   selectUsers,
   selectUserByID,
-  updateComment,
-  insertArticle,
+  selectTopics,
   insertTopic,
 } = require('../models/models');
-
-const getTopics = (req, res, next) => {
-  return selectTopics()
-    .then((rows) => {
-      res.status(200).send({ topics: rows });
-    })
-    .catch(next);
-};
 
 const getApi = (req, res, next) => {
   return selectEndpoints().then((endpoints) => {
     res.status(200).send({ endpoints });
   });
+};
+
+const getArticles = (req, res, next) => {
+  const { query } = req;
+  return selectArticles(query)
+    .then((rows) => {
+      res.status(200).send({ articles: rows, total_count: rows.length });
+    })
+    .catch(next);
+};
+
+const postArticle = (req, res, next) => {
+  const { body, params } = req;
+  return insertArticle(body, params.article_id)
+    .then((rows) => {
+      res.status(201).send({ article: rows });
+    })
+    .catch(next);
 };
 
 const getArticleByID = (req, res, next) => {
@@ -37,11 +48,20 @@ const getArticleByID = (req, res, next) => {
     .catch(next);
 };
 
-const getArticles = (req, res, next) => {
-  const { query } = req;
-  return selectArticles(query)
+const patchArticle = (req, res, next) => {
+  const { body, params } = req;
+  return updateArticle(body, params.article_id)
     .then((rows) => {
-      res.status(200).send({ articles: rows, total_count: rows.length });
+      res.status(200).send({ article: rows });
+    })
+    .catch(next);
+};
+
+const deleteArticle = (req, res, next) => {
+  const { params } = req;
+  return dropArticle(params.article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };
@@ -64,11 +84,11 @@ const postCommentToArticle = (req, res, next) => {
     .catch(next);
 };
 
-const patchArticle = (req, res, next) => {
+const patchComment = (req, res, next) => {
   const { body, params } = req;
-  return updateArticle(body, params.article_id)
+  return updateComment(body, params.comment_id)
     .then((rows) => {
-      res.status(200).send({ article: rows });
+      res.status(200).send({ comment: rows });
     })
     .catch(next);
 };
@@ -90,7 +110,7 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUserByID = (req, res, next) => {
+const getUserByUsername = (req, res, next) => {
   const { params } = req;
   return selectUserByID(params.username)
     .then((rows) => {
@@ -99,20 +119,10 @@ const getUserByID = (req, res, next) => {
     .catch(next);
 };
 
-const patchComment = (req, res, next) => {
-  const { body, params } = req;
-  return updateComment(body, params.comment_id)
+const getTopics = (req, res, next) => {
+  return selectTopics()
     .then((rows) => {
-      res.status(200).send({ comment: rows });
-    })
-    .catch(next);
-};
-
-const postArticle = (req, res, next) => {
-  const { body, params } = req;
-  return insertArticle(body, params.article_id)
-    .then((rows) => {
-      res.status(201).send({ article: rows });
+      res.status(200).send({ topics: rows });
     })
     .catch(next);
 };
@@ -127,17 +137,18 @@ const postTopics = (req, res, next) => {
 };
 
 module.exports = {
-  getTopics,
   getApi,
-  getArticleByID,
   getArticles,
+  postArticle,
+  getArticleByID,
+  patchArticle,
+  deleteArticle,
   getCommentsByArticle,
   postCommentToArticle,
-  patchArticle,
+  patchComment,
   deleteComment,
   getUsers,
-  getUserByID,
-  patchComment,
-  postArticle,
+  getUserByUsername,
+  getTopics,
   postTopics,
 };
