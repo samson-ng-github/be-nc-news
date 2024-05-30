@@ -2,29 +2,8 @@ const db = require('../db/connection');
 const format = require('pg-format');
 const endpoints = require('../endpoints.json');
 
-const selectTopics = () => {
-  return db.query('SELECT * FROM topics').then(({ rows }) => {
-    return rows;
-  });
-};
-
 const selectEndpoints = () => {
   return Promise.resolve(endpoints);
-};
-
-const selectArticleByID = (id) => {
-  if (isNaN(Number(id)))
-    return Promise.reject({ status: 400, msg: 'ID is not a number' });
-  return db
-    .query(
-      "SELECT articles.article_id, title, topic, articles.author, articles.body, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;",
-      [id]
-    )
-    .then(({ rows }) => {
-      if (!rows.length)
-        return Promise.reject({ status: 404, msg: 'Invalid ID' });
-      return rows[0];
-    });
 };
 
 const selectArticles = (queries) => {
@@ -78,12 +57,83 @@ const selectArticles = (queries) => {
   });
 };
 
+const insertArticle = (article, id) => {
+  const { title, topic, author, body } = article;
+  if (!title || !topic || !author || !body)
+    return Promise.reject({ status: 400, msg: 'Invalid article' });
+
+  const promiseArr = [
+    db.query('SELECT slug FROM topics'),
+    db.query('SELECT username FROM users'),
+  ];
+
+  return Promise.all(promiseArr)
+    .then(([topics, users]) => {
+      if (!topics.rows.some((item) => item.slug === topic))
+        return Promise.reject({ status: 404, msg: 'Invalid topic' });
+      if (!users.rows.some((item) => item.username === author))
+        return Promise.reject({ status: 404, msg: 'Invalid author' });
+
+      const formattedStr = format(
+        'INSERT INTO articles (title, topic, author, body) VALUES %L RETURNING *;',
+        [[title, topic, author, body]]
+      );
+      return db.query(formattedStr);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+const selectArticleByID = (id) => {
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
+  return db
+    .query(
+      "SELECT articles.article_id, title, topic, articles.author, articles.body, TO_CHAR(articles.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at, articles.votes, article_img_url, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;",
+      [id]
+    )
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      return rows[0];
+    });
+};
+
+const updateArticle = (update, id) => {
+  const { inc_votes } = update;
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
+  if (!inc_votes || typeof inc_votes !== 'number')
+    return Promise.reject({ status: 400, msg: 'Invalid update' });
+
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+      return rows[0];
+    });
+};
+
+const dropArticle = (id) => {
+  if (isNaN(Number(id)))
+    return Promise.reject({ status: 400, msg: 'ID is not a number' });
+  return db
+    .query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [id])
+    .then(({ rows }) => {
+      if (!rows.length)
+        return Promise.reject({ status: 404, msg: 'Invalid ID' });
+    });
+};
+
 const selectCommentsByArticle = (id, queries) => {
   let { limit, p } = queries;
   limit = limit || 10;
   p = p || 1;
-
-  console.log(limit, limit * (p - 1));
 
   if (isNaN(Number(id)))
     return Promise.reject({ status: 400, msg: 'ID is not a number' });
@@ -138,7 +188,7 @@ const insertCommentToArticle = (comment, id) => {
     });
 };
 
-const updateArticle = (update, id) => {
+const updateComment = (update, id) => {
   const { inc_votes } = update;
   if (isNaN(Number(id)))
     return Promise.reject({ status: 400, msg: 'ID is not a number' });
@@ -147,7 +197,7 @@ const updateArticle = (update, id) => {
 
   return db
     .query(
-      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
       [inc_votes, id]
     )
     .then(({ rows }) => {
@@ -184,51 +234,10 @@ const selectUserByID = (username) => {
     });
 };
 
-const updateComment = (update, id) => {
-  const { inc_votes } = update;
-  if (isNaN(Number(id)))
-    return Promise.reject({ status: 400, msg: 'ID is not a number' });
-  if (!inc_votes || typeof inc_votes !== 'number')
-    return Promise.reject({ status: 400, msg: 'Invalid update' });
-
-  return db
-    .query(
-      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
-      [inc_votes, id]
-    )
-    .then(({ rows }) => {
-      if (!rows.length)
-        return Promise.reject({ status: 404, msg: 'Invalid ID' });
-      return rows[0];
-    });
-};
-
-const insertArticle = (article, id) => {
-  const { title, topic, author, body } = article;
-  if (!title || !topic || !author || !body)
-    return Promise.reject({ status: 400, msg: 'Invalid article' });
-
-  const promiseArr = [
-    db.query('SELECT slug FROM topics'),
-    db.query('SELECT username FROM users'),
-  ];
-
-  return Promise.all(promiseArr)
-    .then(([topics, users]) => {
-      if (!topics.rows.some((item) => item.slug === topic))
-        return Promise.reject({ status: 404, msg: 'Invalid topic' });
-      if (!users.rows.some((item) => item.username === author))
-        return Promise.reject({ status: 404, msg: 'Invalid author' });
-
-      const formattedStr = format(
-        'INSERT INTO articles (title, topic, author, body) VALUES %L RETURNING *;',
-        [[title, topic, author, body]]
-      );
-      return db.query(formattedStr);
-    })
-    .then(({ rows }) => {
-      return rows[0];
-    });
+const selectTopics = () => {
+  return db.query('SELECT * FROM topics').then(({ rows }) => {
+    return rows;
+  });
 };
 
 const insertTopic = (article, id) => {
@@ -246,17 +255,18 @@ const insertTopic = (article, id) => {
 };
 
 module.exports = {
-  selectTopics,
   selectEndpoints,
-  selectArticleByID,
   selectArticles,
+  insertArticle,
+  selectArticleByID,
+  updateArticle,
+  dropArticle,
   selectCommentsByArticle,
   insertCommentToArticle,
-  updateArticle,
+  updateComment,
   dropComment,
   selectUsers,
   selectUserByID,
-  updateComment,
-  insertArticle,
+  selectTopics,
   insertTopic,
 };

@@ -94,6 +94,10 @@
       ]
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "delete article by article_id",
+    "queries": []
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments for one article",
     "queries": ["limit", "p"],
@@ -182,6 +186,18 @@
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "POST /api/topics": {
+    "description": "post a new topic",
+    "queries": [],
+    "requestFormat": {
+      "slug": "magic",
+      "description": "How to summon a unicorn"
+    },
+    "exampleResponse": {
+      "slug": "magic",
+      "description": "How to summon a unicorn"
     }
   }
 }
