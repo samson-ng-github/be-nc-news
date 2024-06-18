@@ -13,7 +13,7 @@ const selectArticles = (queries) => {
   limit = limit || 10;
   p = p || 1;
   const queryList = ['topic', 'sort_by', 'order', 'limit', 'p'];
-  const topicList = ['mitch', 'cats', 'paper'];
+  const topicList = ['mitch', 'cats', 'paper', 'coding', 'football', 'cooking'];
   const sortByList = [
     'article_id',
     'title',

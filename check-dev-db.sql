@@ -2,4 +2,5 @@
 
 SELECT * FROM topics;
 
-SELECT * FROM users;
+SELECT article_id, title, topic, articles.author, created_at, articles.votes, article_img_url FROM articles;
+
