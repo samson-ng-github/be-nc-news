@@ -10,7 +10,7 @@ const selectArticles = (queries) => {
   let { topic, sort_by, order, limit, p } = queries;
   sort_by = sort_by || 'created_at';
   order = order || 'desc';
-  limit = limit || 10;
+  // limit = limit || 1000;
   p = p || 1;
   const queryList = ['topic', 'sort_by', 'order', 'limit', 'p'];
   const topicList = ['mitch', 'cats', 'paper', 'coding', 'football', 'cooking'];
@@ -38,7 +38,7 @@ const selectArticles = (queries) => {
   if (!orderList.includes(order))
     return Promise.reject({ status: 404, msg: 'Invalid order type' });
 
-  if (isNaN(Number(limit)))
+  if (limit && isNaN(Number(limit)))
     return Promise.reject({ status: 400, msg: 'limit is not a number' });
 
   if (isNaN(Number(p)))
@@ -49,8 +49,10 @@ const selectArticles = (queries) => {
   let queryValues = [];
   if (topic) queryString += ` WHERE topic = '${topic}'`;
   queryString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toUpperCase()}`;
-  queryValues.push(limit, limit * (p - 1));
-  queryString += ` LIMIT $1 OFFSET $2;`;
+  if (limit) {
+    queryValues.push(limit, limit * (p - 1));
+    queryString += ` LIMIT $1 OFFSET $2;`;
+  } else queryString += ';';
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;

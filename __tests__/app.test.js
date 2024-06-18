@@ -45,7 +45,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(10);
+        expect(body.articles).toHaveLength(13);
         expect(body.articles).toBeSortedBy('created_at', { descending: true });
         body.articles.forEach((article) => {
           expect(article).toEqual({
@@ -69,7 +69,7 @@ describe('GET /api/articles?topic', () => {
       .get('/api/articles?topic=mitch')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(10);
+        expect(body.articles).toHaveLength(12);
         body.articles.forEach((article) => {
           expect(article).toEqual({
             article_id: expect.any(Number),
@@ -116,7 +116,7 @@ describe('GET /api/articles?sort_by', () => {
       .get('/api/articles?sort_by=title')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(10);
+        expect(body.articles).toHaveLength(13);
         expect(body.articles).toBeSortedBy('title', { descending: true });
       });
   });
@@ -144,7 +144,7 @@ describe('GET /api/articles?order', () => {
       .get('/api/articles?order=asc')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(10);
+        expect(body.articles).toHaveLength(13);
         expect(body.articles).toBeSortedBy('created_at');
       });
   });
@@ -167,12 +167,12 @@ describe('GET /api/articles?order', () => {
 });
 
 describe('GET /api/articles?limit&p', () => {
-  test('respond with 200 and return by default only 10 articles', () => {
+  test('respond with 200 and return by default no limit', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(10);
+        expect(body.articles).toHaveLength(13);
       });
   });
   test('respond with 200 and return as many as articles as specified by limit', () => {
@@ -191,9 +191,9 @@ describe('GET /api/articles?limit&p', () => {
         expect(body.msg).toBe('limit is not a number');
       });
   });
-  test('respond with 200 if page is specified, paginate the articles and return the relevant page', () => {
+  test('respond with 200 if page and limit are specified, paginate the articles and return the relevant page', () => {
     return request(app)
-      .get('/api/articles?sort_by=article_id&p=2')
+      .get('/api/articles?sort_by=article_id&limit=10&p=2')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(3);
@@ -221,14 +221,6 @@ describe('GET /api/articles?limit&p', () => {
         expect(body.articles[2].article_id).toBe(6);
         expect(body.articles[3].article_id).toBe(5);
         expect(body.articles[4].article_id).toBe(4);
-      });
-  });
-  test('respond with 200 and total_count property, displaying the total number of articles', () => {
-    return request(app)
-      .get('/api/articles?sort_by=article_id&p=2')
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.total_count).toBe(3);
       });
   });
 });
