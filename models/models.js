@@ -22,6 +22,7 @@ const selectArticles = (queries) => {
     'created_at',
     'votes',
     'article_img_url',
+    'comment_count',
   ];
   const orderList = ['desc', 'asc'];
 
